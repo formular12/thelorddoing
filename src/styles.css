@@ -1,0 +1,756 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: #efffee;
+  color: #111;
+  font-size: 13px;
+}
+
+button,
+input,
+select {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =========================
+   PAGE
+========================= */
+
+.page {
+  min-height: 100vh;
+  padding: 0;
+  background: #efffee;
+}
+
+.platform {
+  width: 94%;
+  min-width: 1000px;
+  max-width: none;
+  margin: 0 auto;
+  background: #fff;
+  overflow: hidden;
+}
+
+/* =========================
+   TOP
+========================= */
+
+.top {
+  height: 30px;
+  background: #001827;
+  color: #fff;
+
+  border-bottom: 2px solid #d5dfe3;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 7px;
+}
+
+.software {
+  color: #00ff19;
+  font-weight: 900;
+  font-size: 12px;
+}
+
+.welcome {
+  font-style: italic;
+  font-weight: 900;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+}
+
+.back {
+  background: #eee;
+  color: #111;
+
+  font-style: normal;
+  font-size: 23px;
+  line-height: 21px;
+
+  padding: 0 5px;
+
+  height: 23px;
+}
+
+/* =========================
+   COMPANY
+========================= */
+
+.company {
+  height: 31px;
+
+  background: #001827;
+  color: #fff;
+
+  font-weight: 900;
+
+  padding: 6px 7px;
+
+  border-bottom: 1px solid #fff;
+}
+
+/* =========================
+   BRANCH
+========================= */
+
+.branch {
+  height: 20px;
+
+  background: #e0e800;
+  color: red;
+
+  text-align: center;
+
+  font-weight: 900;
+  font-size: 18px;
+
+  line-height: 20px;
+}
+
+/* =========================
+   BODY
+========================= */
+
+.body {
+  height: calc(100vh - 105px);
+  min-height: 556px;
+
+  display: flex;
+
+  background: #fff;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar {
+  width: 216px;
+  flex: 0 0 216px;
+
+  background: #a96f00;
+
+  padding: 6px 5px 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-title {
+  text-align: center;
+
+  color: #fff;
+
+  font-weight: 900;
+
+  height: 14px;
+  line-height: 14px;
+}
+
+/* =========================
+   MAIN MENU ITEMS
+========================= */
+
+.main-item {
+  height: 31px;
+  width: 100%;
+
+  border: 0;
+
+  border-top: 1px solid #dce7f0;
+  border-bottom: 1px solid #fff;
+
+  background:
+    linear-gradient(
+      #d7e5f2,
+      #b9cde2
+    );
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 8px 0 10px;
+
+  font-weight: 900;
+  font-size: 13px;
+
+  cursor: pointer;
+
+  color: #080808;
+
+  text-align: left;
+}
+
+.administrator {
+  text-decoration: underline;
+}
+
+/* =========================
+   PLUS / MINUS
+========================= */
+
+.plus,
+.minus {
+  width: 16px;
+  height: 16px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-weight: 900;
+
+  flex: 0 0 16px;
+}
+
+.plus {
+  border: 1px solid #55a300;
+
+  background: #e6ffd2;
+
+  color: #4d9700;
+
+  font-size: 15px;
+}
+
+.minus {
+  border: 1px solid #c74632;
+
+  background: #ffe0da;
+
+  color: #c13b2b;
+
+  font-size: 14px;
+}
+
+/* =========================
+   ADMIN SUBMENU
+========================= */
+
+.admin-submenu {
+  padding: 0 3px;
+
+  background: #a96f00;
+}
+
+.sub-item {
+  height: 24px;
+  width: 100%;
+
+  display: block;
+
+  text-align: left;
+
+  padding: 0 8px;
+
+  border: 1px solid rgba(255, 255, 255, 0.9);
+
+  border-bottom: 1px solid #fff;
+
+  background: #e8f1fb;
+
+  color: #080808;
+
+  font-weight: 900;
+  font-size: 12px;
+
+  cursor: pointer;
+}
+
+.sub-item:hover,
+.sub-item.selected {
+  background: #d5e6f6;
+}
+
+/* =========================
+   DOTTED SEPARATORS
+========================= */
+
+.dots {
+  height: 12px;
+
+  line-height: 10px;
+
+  text-align: center;
+
+  background: #a96f00;
+
+  color: #111;
+
+  font-weight: 900;
+
+  letter-spacing: 1px;
+
+  overflow: hidden;
+}
+
+/* =========================
+   REPORT SECTIONS
+========================= */
+
+.menu-section {
+  height: 19px;
+
+  background: #a96f00;
+
+  color: #fff;
+
+  text-align: center;
+
+  font-weight: 900;
+
+  line-height: 19px;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+}
+
+.sidebar-fill {
+  flex: 1;
+
+  min-height: 90px;
+
+  background: #a96f00;
+}
+
+/* =========================
+   WORKSPACE
+========================= */
+
+.workspace {
+  flex: 1;
+
+  min-width: 0;
+
+  border-left: 5px solid #edf8ff;
+  border-right: 5px solid #edf8ff;
+
+  padding: 6px;
+
+  background: #fff;
+
+  position: relative;
+}
+
+/* =========================
+   MONITOR
+========================= */
+
+.monitor-wrap {
+  position: relative;
+
+  width: 202px;
+  height: 190px;
+}
+
+.monitor {
+  width: 202px;
+  height: 151px;
+
+  border: 5px solid #b8b8b8;
+
+  background: #d8d8d8;
+
+  border-radius: 3px;
+
+  position: relative;
+
+  box-shadow: 2px 2px 0 #aaa;
+
+  z-index: 2;
+}
+
+.screen {
+  position: absolute;
+
+  left: 8px;
+  right: 8px;
+
+  top: 7px;
+  bottom: 23px;
+
+  background: #050505;
+
+  border: 2px solid #222;
+}
+
+.mlogo {
+  position: absolute;
+
+  bottom: 5px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  font-size: 5px;
+
+  font-weight: bold;
+}
+
+.neck {
+  position: absolute;
+
+  top: 148px;
+  left: 87px;
+
+  width: 31px;
+  height: 24px;
+
+  background: #5b5b5b;
+
+  border: 1px solid #444;
+
+  z-index: 1;
+}
+
+.base {
+  position: absolute;
+
+  top: 169px;
+  left: 53px;
+
+  width: 99px;
+  height: 20px;
+
+  background: #292929;
+
+  border-radius: 50% 50% 8px 8px;
+
+  box-shadow:
+    0 3px 2px rgba(0, 0, 0, 0.25);
+
+  z-index: 1;
+}
+
+/* =========================
+   BANK REGISTRATION
+========================= */
+
+.bank-page {
+  width: 100%;
+  height: 100%;
+
+  background: #f3fff3;
+}
+
+/* Screen heading */
+
+.screen-heading {
+  height: 18px;
+
+  border-bottom: 1px solid #ddd;
+
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 11px;
+
+  font-weight: 900;
+}
+
+.screen-heading a {
+  color: #0000cc;
+
+  text-decoration: none;
+}
+
+.list-link {
+  padding-right: 3px;
+}
+
+/* Red title */
+
+.bank-title {
+  text-align: center;
+
+  color: red;
+
+  font-weight: 900;
+
+  font-size: 12px;
+
+  height: 27px;
+
+  line-height: 25px;
+}
+
+/* =========================
+   BANK SELECT BOX
+========================= */
+
+.bank-select-box {
+  width: 640px;
+
+  margin: 0 auto;
+
+  border: 1px solid #168bd1;
+}
+
+.form-header {
+  height: 22px;
+
+  background: #118bce;
+
+  color: #fff;
+
+  text-align: center;
+
+  font-weight: 900;
+
+  line-height: 22px;
+
+  letter-spacing: 0.5px;
+}
+
+.select-row {
+  height: 43px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 9px;
+}
+
+.select-row label,
+.form-row label {
+  color: #0781cf;
+
+  font-weight: 900;
+}
+
+.select-row select {
+  width: 309px;
+  height: 31px;
+
+  border: 1px solid #1c4d9a;
+
+  background: #fff;
+
+  color: #073c9e;
+
+  font-weight: 900;
+
+  text-align: center;
+}
+
+/* =========================
+   ADD NEW BANK FORM
+========================= */
+
+.bank-form {
+  width: 640px;
+
+  margin: 0 auto;
+
+  padding-bottom: 5px;
+
+  border: 1px solid #168bd1;
+}
+
+.bank-form .form-header {
+  margin-bottom: 5px;
+}
+
+.form-row {
+  height: 31px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+}
+
+.form-row label {
+  width: 155px;
+
+  text-align: right;
+}
+
+.form-row input {
+  width: 264px;
+
+  height: 26px;
+
+  border: 1px solid #3553a0;
+
+  text-align: center;
+
+  color: #234ca4;
+
+  font-size: 12px;
+
+  background: #fff;
+}
+
+/* Submit */
+
+.submit {
+  display: block;
+
+  width: 257px;
+  height: 31px;
+
+  margin: 4px auto 0;
+
+  background: #050505;
+
+  color: #fff;
+
+  border: 0;
+
+  font-weight: 900;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.saved {
+  text-align: center;
+
+  color: green;
+
+  font-weight: 900;
+
+  margin-top: 4px;
+}
+
+/* =========================
+   BANK UPDATED DETAILS
+========================= */
+
+.bank-updated-box {
+  width: 640px;
+
+  margin: 0 auto;
+
+  border: 1px solid #168bd1;
+
+  background: #f3fff3;
+}
+
+.detail-row {
+  height: 24px;
+
+  display: flex;
+
+  align-items: center;
+
+  border-top: 1px solid #168bd1;
+}
+
+.detail-row label {
+  width: 265px;
+
+  padding-right: 4px;
+
+  text-align: right;
+
+  color: #0781cf;
+
+  font-weight: 900;
+}
+
+.detail-row strong {
+  flex: 1;
+
+  padding-left: 4px;
+
+  color: #111;
+
+  font-weight: 900;
+}
+
+/* =========================
+   PLACEHOLDER
+========================= */
+
+.placeholder {
+  padding: 10px;
+}
+
+.placeholder b {
+  display: inline-block;
+
+  background: #a96f00;
+
+  color: #fff;
+
+  padding: 4px 12px;
+}
+
+.placeholder p {
+  color: #666;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+  height: 24px;
+
+  background: #001827;
+
+  color: #fff;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 0 7px;
+
+  font-size: 11px;
+
+  font-weight: 900;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+}
+
+.green {
+  color: #00ff19;
+
+  font-size: 15px;
+}
+
+.red {
+  color: #ff1717;
+
+  font-size: 15px;
+}

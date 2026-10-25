@@ -1,0 +1,53 @@
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Production build output
+dist/
+backend/dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Local backups
+*.backup
+*.backup.*
+*.dump
+*.sql
+*.tar
+*.gz
+
+# Local editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local configuration backups
+*.backup-before-hosting
+
+# Historical source backups
+*.backup-*
+*.before-*
+
+# Backend dependencies and generated files
+backend/node_modules/
+backend/dist/
+
+# Backend environment files
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Historical backend backups
+backend/**/*.backup
+backend/**/*.backup-*
+backend/**/*.before-*
+backend/**/*.backup-before-*

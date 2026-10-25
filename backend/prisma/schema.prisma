@@ -1,0 +1,375 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum RecordStatus {
+  ACTIVE
+  INACTIVE
+  DELETED
+}
+
+enum PaymentMethod {
+  CASH
+  BANK
+  TRANSFER
+  POS
+  OTHER
+}
+
+enum SaleType {
+  CASH
+  NYP
+}
+
+enum AdjustmentType {
+  INCREASE
+  DECREASE
+}
+
+enum AdminRole {
+  OGA
+  MANAGER
+  CASHIER
+}
+
+model AdminUser {
+  id           Int          @id @default(autoincrement())
+  username     String       @unique
+  passwordHash String
+  displayName  String?
+  role         AdminRole    @default(OGA)
+  status       RecordStatus @default(ACTIVE)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  auditLogs AuditLog[]
+
+  externalCashPayIns ExternalCashPayIn[] @relation("CashierExternalCashPayIns")
+  cashDeposits       CashDeposit[]       @relation("CashierCashDeposits")
+  expenses           Expense[]           @relation("CashierExpenses")
+  bankLodgements     BankLodgement[]     @relation("CashierBankLodgements")
+  nypPayments        NypPayment[]        @relation("CashierNypPayments")
+  cashSalePayments   CashSalePayment[]   @relation("CashierCashSalePayments")
+}
+
+model BankAccount {
+  id          Int          @id @default(autoincrement())
+  accountId   String       @unique
+  bankName    String
+  accountName String
+  accountNo   String
+  year        Int?
+  month       Int?
+  date        DateTime?
+  status      RecordStatus @default(ACTIVE)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  paymentsFromCompany CompanyPayment[]
+  paymentsFromNyp     NypPayment[]
+  cashSalePayments    CashSalePayment[]
+  cashDeposits        CashDeposit[]
+  bankLodgements      BankLodgement[]
+  externalPayIns      ExternalCashPayIn[]
+}
+
+model NypCustomer {
+  id            Int          @id @default(autoincrement())
+  fullName      String
+  nypId         String       @unique
+  totalSupplied Decimal      @default(0) @db.Decimal(18, 2)
+  totalPaid     Decimal      @default(0) @db.Decimal(18, 2)
+  balance       Decimal      @default(0) @db.Decimal(18, 2)
+  year          Int?
+  month         Int?
+  date          DateTime?
+  status        RecordStatus @default(ACTIVE)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  sales    NypSale[]
+  payments NypPayment[]
+}
+
+model Company {
+  id          Int          @id @default(autoincrement())
+  companyId   String       @unique
+  companyName String
+  year        Int?
+  month       Int?
+  date        DateTime?
+  status      RecordStatus @default(ACTIVE)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  products    Product[]
+  purchases   CompanyPurchase[]
+  payments    CompanyPayment[]
+  adjustments StockAdjustment[]
+}
+
+model Product {
+  id               Int          @id @default(autoincrement())
+  companyId        Int
+  stockName        String
+  ctnSize          Decimal      @db.Decimal(12, 3)
+  ctnCostPrice     Decimal      @db.Decimal(18, 2)
+  ctnSellingPrice  Decimal      @db.Decimal(18, 2)
+  halfCtnSelling   Decimal      @default(0) @db.Decimal(18, 2)
+  qrtSellingPrice  Decimal      @default(0) @db.Decimal(18, 2)
+  unitSellingPrice Decimal      @default(0) @db.Decimal(18, 2)
+  quantityOnHand   Decimal      @default(0) @db.Decimal(18, 3)
+  status           RecordStatus @default(ACTIVE)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  company         Company               @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  purchaseLines   CompanyPurchaseLine[]
+  adjustmentLines StockAdjustmentLine[]
+  saleLines       CashSaleLine[]
+  nypSaleLines    NypSaleLine[]
+  priceUpdates    PriceUpdate[]
+
+  @@index([companyId])
+  @@index([stockName])
+}
+
+model CompanyPurchase {
+  id           Int      @id @default(autoincrement())
+  companyId    Int
+  invoiceNo    String?
+  purchaseDate DateTime @default(now())
+  totalAmount  Decimal  @default(0) @db.Decimal(18, 2)
+  createdAt    DateTime @default(now())
+
+  company Company               @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  lines   CompanyPurchaseLine[]
+
+  @@index([companyId, purchaseDate])
+}
+
+model CompanyPurchaseLine {
+  id         Int     @id @default(autoincrement())
+  purchaseId Int
+  productId  Int
+  quantity   Decimal @db.Decimal(18, 3)
+  unitCost   Decimal @db.Decimal(18, 2)
+  lineTotal  Decimal @db.Decimal(18, 2)
+
+  purchase CompanyPurchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  product  Product         @relation(fields: [productId], references: [id], onDelete: Restrict)
+}
+
+model StockAdjustment {
+  id             Int            @id @default(autoincrement())
+  companyId      Int
+  adjustmentType AdjustmentType
+  reason         String?
+  adjustmentDate DateTime       @default(now())
+  createdAt      DateTime       @default(now())
+
+  company Company               @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  lines   StockAdjustmentLine[]
+}
+
+model StockAdjustmentLine {
+  id           Int     @id @default(autoincrement())
+  adjustmentId Int
+  productId    Int
+  quantity     Decimal @db.Decimal(18, 3)
+
+  adjustment StockAdjustment @relation(fields: [adjustmentId], references: [id], onDelete: Cascade)
+  product    Product         @relation(fields: [productId], references: [id], onDelete: Restrict)
+}
+
+model PriceUpdate {
+  id               Int      @id @default(autoincrement())
+  productId        Int
+  ctnCostPrice     Decimal? @db.Decimal(18, 2)
+  ctnSellingPrice  Decimal? @db.Decimal(18, 2)
+  halfCtnSelling   Decimal? @db.Decimal(18, 2)
+  qrtSellingPrice  Decimal? @db.Decimal(18, 2)
+  unitSellingPrice Decimal? @db.Decimal(18, 2)
+  effectiveDate    DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([productId, effectiveDate])
+}
+
+model CompanyPayment {
+  id            Int           @id @default(autoincrement())
+  companyId     Int
+  bankAccountId Int?
+  amount        Decimal       @db.Decimal(18, 2)
+  paymentMethod PaymentMethod
+  reference     String?
+  paymentDate   DateTime      @default(now())
+  note          String?
+
+  company     Company      @relation(fields: [companyId], references: [id], onDelete: Restrict)
+  bankAccount BankAccount? @relation(fields: [bankAccountId], references: [id], onDelete: Restrict)
+
+  @@index([companyId, paymentDate])
+}
+
+model NypPayment {
+  id            Int           @id @default(autoincrement())
+  nypCustomerId Int
+  bankAccountId Int?
+  amount        Decimal       @db.Decimal(18, 2)
+  paymentMethod PaymentMethod
+  reference     String?
+  paymentDate   DateTime      @default(now())
+  note          String?
+  cashierId     Int?
+
+  nypCustomer NypCustomer  @relation(fields: [nypCustomerId], references: [id], onDelete: Restrict)
+  bankAccount BankAccount? @relation(fields: [bankAccountId], references: [id], onDelete: Restrict)
+  cashier     AdminUser?   @relation("CashierNypPayments", fields: [cashierId], references: [id], onDelete: SetNull)
+
+  @@index([nypCustomerId, paymentDate])
+  @@index([cashierId, paymentDate])
+}
+
+model CashSale {
+  id           Int      @id @default(autoincrement())
+  invoiceNo    String   @unique
+  saleDate     DateTime @default(now())
+  saleType     SaleType @default(CASH)
+  customerName String?
+  salesStaff   String?
+  totalAmount  Decimal  @default(0) @db.Decimal(18, 2)
+  paidAmount   Decimal  @default(0) @db.Decimal(18, 2)
+  balance      Decimal  @default(0) @db.Decimal(18, 2)
+
+  lines    CashSaleLine[]
+  payments CashSalePayment[]
+}
+
+model CashSaleLine {
+  id        Int     @id @default(autoincrement())
+  saleId    Int
+  productId Int
+  quantity  Decimal @db.Decimal(18, 3)
+  saleQty   Decimal @default(0) @db.Decimal(18, 3)
+  rate      String  @default("Unit")
+  unitPrice Decimal @db.Decimal(18, 2)
+  discount  Decimal @default(0) @db.Decimal(18, 2)
+  lineTotal Decimal @db.Decimal(18, 2)
+
+  sale    CashSale @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+}
+
+model CashSalePayment {
+  id            Int           @id @default(autoincrement())
+  saleId        Int
+  bankAccountId Int?
+  amount        Decimal       @db.Decimal(18, 2)
+  paymentMethod PaymentMethod
+  reference     String?
+  paymentDate   DateTime      @default(now())
+  cashierId     Int?
+
+  sale        CashSale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  bankAccount BankAccount? @relation(fields: [bankAccountId], references: [id], onDelete: Restrict)
+  cashier     AdminUser?   @relation("CashierCashSalePayments", fields: [cashierId], references: [id], onDelete: SetNull)
+
+  @@index([cashierId, paymentDate])
+}
+
+model NypSale {
+  id            Int      @id @default(autoincrement())
+  invoiceNo     String   @unique
+  nypCustomerId Int
+  saleDate      DateTime @default(now())
+  totalAmount   Decimal  @default(0) @db.Decimal(18, 2)
+
+  nypCustomer NypCustomer   @relation(fields: [nypCustomerId], references: [id], onDelete: Restrict)
+  lines       NypSaleLine[]
+}
+
+model NypSaleLine {
+  id        Int     @id @default(autoincrement())
+  saleId    Int
+  productId Int
+  quantity  Decimal @db.Decimal(18, 3)
+  unitPrice Decimal @db.Decimal(18, 2)
+  lineTotal Decimal @db.Decimal(18, 2)
+
+  sale    NypSale @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+}
+
+model ExternalCashPayIn {
+  id            Int      @id @default(autoincrement())
+  bankAccountId Int?
+  cashierId     Int?
+  amount        Decimal  @db.Decimal(18, 2)
+  source        String
+  reference     String?
+  payInDate     DateTime @default(now())
+  note          String?
+
+  bankAccount BankAccount? @relation(fields: [bankAccountId], references: [id], onDelete: Restrict)
+  cashier     AdminUser?   @relation("CashierExternalCashPayIns", fields: [cashierId], references: [id], onDelete: SetNull)
+}
+
+model CashDeposit {
+  id            Int      @id @default(autoincrement())
+  bankAccountId Int?
+  cashierId     Int?
+  amount        Decimal  @db.Decimal(18, 2)
+  depositDate   DateTime @default(now())
+  reference     String?
+  note          String?
+
+  bankAccount BankAccount? @relation(fields: [bankAccountId], references: [id], onDelete: Restrict)
+  cashier     AdminUser?   @relation("CashierCashDeposits", fields: [cashierId], references: [id], onDelete: SetNull)
+}
+
+model Expense {
+  id          Int      @id @default(autoincrement())
+  cashierId   Int?
+  description String
+  amount      Decimal  @db.Decimal(18, 2)
+  expenseDate DateTime @default(now())
+  category    String?
+  note        String?
+
+  cashier AdminUser? @relation("CashierExpenses", fields: [cashierId], references: [id], onDelete: SetNull)
+}
+
+model BankLodgement {
+  id            Int      @id @default(autoincrement())
+  bankAccountId Int
+  cashierId     Int?
+  amount        Decimal  @db.Decimal(18, 2)
+  lodgementDate DateTime @default(now())
+  reference     String?
+  note          String?
+
+  bankAccount BankAccount @relation(fields: [bankAccountId], references: [id], onDelete: Restrict)
+  cashier     AdminUser? @relation("CashierBankLodgements", fields: [cashierId], references: [id], onDelete: SetNull)
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  adminId   Int?
+  action    String
+  entity    String
+  entityId  String?
+  details   Json?
+  createdAt DateTime @default(now())
+
+  admin AdminUser? @relation(fields: [adminId], references: [id], onDelete: SetNull)
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+}
