@@ -1,51 +1,137 @@
-# The Lord's Doing backend
+# The Lord's Doing Backend
 
-Backend foundation for the recreated inventory/store application.
+Backend service for The Lord's Doing inventory and store operations application.
 
-## Stack
+## Technology Stack
 
-- Node.js + TypeScript
-- Express
+- Node.js
+- TypeScript
+- Express 5
 - PostgreSQL
 - Prisma ORM
-- Zod validation
+- Zod for request validation
+- bcryptjs for password hashing
+- Helmet for HTTP security headers
+- dotenv for environment configuration
 
-## Local setup
+## Requirements
 
-1. Install PostgreSQL and create a database named `thelorddoing`.
-2. Copy `.env.example` to `.env` and update `DATABASE_URL`.
-3. Install packages:
+- Node.js and npm
+- Access to a PostgreSQL database
+- Environment variables configured for the target environment
+
+## Local Development Setup
+
+From the repository root, enter the backend directory:
 
 ```bash
+cd backend
 npm install
 ```
 
-4. Generate Prisma client:
+Create a local environment file:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and configure the required values:
+
+| Variable | Purpose |
+|---|---|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `PORT` | Port used by the backend server |
+| `CORS_ORIGIN` | Permitted frontend origin |
+| `AUTH_TOKEN_SECRET` | Authentication secret |
+
+Keep `.env` private. Do not commit it or share production credentials.
+
+Generate the Prisma client:
 
 ```bash
 npm run prisma:generate
 ```
 
-5. Create the database tables:
+### Database migrations
+
+The Prisma schema and migration history are located in `prisma/`.
+
+For an existing database, inspect its migration history and schema before applying changes. For a new local development database, review the migration files and then use the appropriate Prisma migration workflow.
+
+The package script for development migrations is:
 
 ```bash
-npx prisma migrate dev --name init
+npm run prisma:migrate
 ```
 
-6. Seed the observed Bank Registration, NYP Registration and DANGOTE Company Registration data:
+Do not assume that a new initial migration is required, and do not apply development migrations to production without reviewing the impact first.
 
-```bash
-npm run seed
-```
-
-7. Start the backend:
+### Start the development server
 
 ```bash
 npm run dev
 ```
 
-Health check:
+The health endpoint is:
 
-`GET http://localhost:4000/api/health`
+```text
+GET /api/health
+```
 
-The first backend vertical slice intentionally covers Bank Registration, NYP Registration and Company Registration. The remaining modules are represented in the relational schema and will be connected screen-by-screen next.
+With the default port of `4000`, test it at:
+
+```text
+http://localhost:4000/api/health
+```
+
+## Production Build
+
+Compile the TypeScript backend:
+
+```bash
+npm run build
+```
+
+Start the compiled application:
+
+```bash
+npm start
+```
+
+Configure the hosting environment so that the database connection, port, authentication secret, and allowed frontend origin match the deployment.
+
+## Prisma Utilities
+
+Generate the Prisma client:
+
+```bash
+npm run prisma:generate
+```
+
+Open Prisma Studio when needed for local development and database inspection:
+
+```bash
+npm run prisma:studio
+```
+
+Run the seed script only after reviewing its contents and confirming the target database:
+
+```bash
+npm run seed
+```
+
+Do not run seed operations against production unless their effects are understood and approved.
+
+## Security and Operations
+
+- Use strong, unique secrets in each environment.
+- Keep environment files and credentials out of version control.
+- Use HTTPS for public endpoints.
+- Restrict database access and configure CORS for the intended frontend.
+- Back up important data before schema changes.
+- Never use real customer credentials or financial records as test data.
+- Review migration changes before applying them to a shared database.
+
+## Related Documentation
+
+See the repository root [`README.md`](../README.md) for the overall project structure and frontend setup.
